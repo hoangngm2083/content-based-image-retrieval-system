@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #query_image, #results {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        #query_image img, #results img {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Images or ZIP File</h1>
+
+    <!-- Upload multiple images -->
+    <form id="uploadImagesForm">
+        <h2>Upload up to 5 Images</h2>
+        <input type="file" name="images" id="imageFiles" accept="image/*" multiple required>
+        <br>
+        <button type="submit">Upload Images</button>
+    </form>
+
+    <!-- Upload ZIP file -->
+    <form id="uploadZipForm">
+        <h2>Upload ZIP File</h2>
+        <input type="file" name="zipfile" id="zipFile" accept=".zip" required>
+        <br>
+        <button type="submit">Upload ZIP</button>
+    </form>
+
+    <!-- Preview uploaded images -->
+    <div id="query_image"></div>
+    <div id="results"></div>
+
+    <script>
+        const API_BACKEND = "http://localhost:5000/";
+        const resultsContainer = document.getElementById("results");
+        const queryImageContainer = document.getElementById("query_image");
+
+        // Upload multiple images
+        document.getElementById("uploadImagesForm").onsubmit = async (e) => {
+            e.preventDefault();
+            const files = document.getElementById("imageFiles").files;
+
+            if (files.length === 0 || files.length > 5) {
+                alert("Vui lòng chọn từ 1 đến 5 ảnh.");
+                return;
+            }
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append("images", files[i]);
+            }
+
+            try {
+                const response = await fetch(API_BACKEND + "upload_images", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Hiển thị ảnh đã upload
+                queryImageContainer.innerHTML = "";
+                for (const filename of result.uploaded) {
+                    const img = document.createElement("img");
+                    img.src = API_BACKEND + "uploads/" + filename;
+                    img.width = 200;
+                    queryImageContainer.appendChild(img);
+                }
+
+                alert("Upload thành công!");
+
+            } catch (err) {
+                alert("Lỗi khi upload ảnh: " + err.message);
+            }
+        };
+
+        // Upload ZIP file
+        document.getElementById("uploadZipForm").onsubmit = async (e) => {
+            e.preventDefault();
+            const file = document.getElementById("zipFile").files[0];
+            if (!file || !file.name.endsWith(".zip")) {
+                alert("Vui lòng chọn một file .zip hợp lệ.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(API_BACKEND + "upload_zip", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Hiển thị danh sách ảnh nếu server trả về mảng
+                if (result.extracted && Array.isArray(result.extracted)) {
+                    queryImageContainer.innerHTML = "";
+                    result.extracted.forEach(imgName => {
+                        const img = document.createElement("img");
+                        img.src = API_BACKEND + "uploads/" + imgName;
+                        img.width = 200;
+                        queryImageContainer.appendChild(img);
+                    });
+                }
+
+                alert("Upload ZIP thành công!");
+
+            } catch (err) {
+                alert("Lỗi khi upload ZIP: " + err.message);
+            }
+        };
+    </script>
+</body>
+</html>

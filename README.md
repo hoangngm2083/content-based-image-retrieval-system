@@ -1,0 +1,1 @@
+tải ảnh vào be/static/images
