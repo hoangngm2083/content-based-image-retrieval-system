@@ -59,23 +59,27 @@
     </style>
 </head>
 <body>
-    <h1>Upload Images or ZIP File</h1>
+    <h1>Image Upload and Search</h1>
 
-    <!-- Upload multiple images -->
-    <form id="uploadImagesForm">
-        <h2>Upload up to 5 Images</h2>
-        <input type="file" name="images" id="imageFiles" accept=".jpg" multiple required>
-        <br>
-        <button type="submit">Upload Images</button>
-    </form>
+    <button id="uploadButton">Upload</button>
 
-    <!-- Upload ZIP file -->
-    <form id="uploadZipForm">
-        <h2>Upload ZIP File</h2>
-        <input type="file" name="zipfile" id="zipFile" accept=".zip" required>
-        <br>
-        <button type="submit">Upload ZIP</button>
-    </form>
+    <div id="uploadPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="background: white; padding: 20px; margin: 100px auto; width: 400px; border-radius: 10px;">
+            <h2>Upload Options</h2>
+            <form id="uploadImagesForm">
+                <h3>Upload up to 5 Images</h3>
+                <input type="file" name="images" id="imageFiles" accept=".jpg" multiple required>
+                <br>
+                <button type="submit">Upload Images</button>
+            </form>
+            <form id="uploadZipForm">
+                <h3>Upload ZIP File</h3>
+                <input type="file" name="zipfile" id="zipFile" accept=".zip" required>
+                <br>
+                <button type="submit">Upload ZIP</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Search similar images -->
     <form id="searchImageForm">
@@ -85,7 +89,7 @@
         <button type="submit">Search</button>
     </form>
 
-  <!-- Preview uploaded images -->
+    <!-- Display search results -->
     <div>
         <h1>Similar Images</h1>
         <div id="search_results"></div>
@@ -93,8 +97,22 @@
 
     <script>
         const API_BACKEND = "http://localhost:5000/";
-
         const searchResultsContainer = document.getElementById("search_results");
+
+        // Show popup when Upload button is clicked
+        document.getElementById("uploadButton").addEventListener("click", () => {
+            document.getElementById("uploadPopup").style.display = "block";
+        });
+
+        // Hide popup when clicking outside
+        const popup = document.getElementById("uploadPopup");
+        const innerDiv = popup.querySelector("div");
+        innerDiv.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+        popup.addEventListener("click", () => {
+            popup.style.display = "none";
+        });
 
         // Upload multiple images
         document.getElementById("uploadImagesForm").onsubmit = async (e) => {
@@ -120,6 +138,7 @@
                 const result = await response.json();
 
                 alert("Upload thành công!");
+                document.getElementById("uploadPopup").style.display = "none";
             } catch (err) {
                 alert("Lỗi khi upload ảnh: " + err.message);
             }
@@ -145,9 +164,8 @@
 
                 const result = await response.json();
 
-                
-
                 alert("Upload ZIP thành công!");
+                document.getElementById("uploadPopup").style.display = "none";
             } catch (err) {
                 alert("Lỗi khi upload ZIP: " + err.message);
             }
@@ -175,10 +193,10 @@
 
                 const result = await response.json();
 
-                // Xóa kết quả cũ trước khi hiển thị kết quả mới
+                // Clear previous results
                 searchResultsContainer.innerHTML = "";
 
-                // Hiển thị danh sách ảnh tương tự từ server
+                // Display similar images
                 if (result && Array.isArray(result)) {
                     result.forEach(item => {
                         const img = document.createElement("img");
