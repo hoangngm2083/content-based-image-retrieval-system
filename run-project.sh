@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# Chạy backend
+# Start backend
 echo "Starting backend..."
 cd ./be || exit
 docker-compose up -d
 cd ..
 
-# Chạy frontend
+# Start frontend
 echo "Starting frontend..."
 cd ./fe || exit
-# Xoá image nếu tồn tại
+# Remove image if it exists
 docker image rm web_fe
 
 docker-compose up -d  --build
 cd ..
 
-# Mở trình duyệt (chỉ hoạt động trên Linux với xdg-open hoặc Mac với open)
+# Open browser (works on Linux with xdg-open or Mac with open)
 echo "Opening http://localhost:8080 in your browser..."
 if command -v xdg-open &> /dev/null; then
     xdg-open http://localhost:8080

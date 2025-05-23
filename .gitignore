@@ -3,4 +3,4 @@ be/.vscode
 fe/.vscode
 
 
-be/static
+be/static/*
