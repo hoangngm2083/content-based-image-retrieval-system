@@ -51,5 +51,33 @@ Sau khi dữ liệu đã được khởi tạo thành công, chạy file `run-pr
 ```bash
 ./run-project.sh
 ```
+---
+
+# Hướng Dẫn Sử Dụng Ứng Dụng
+
+Hệ thống hỗ trợ hai chức năng chính:
+
+## 1. Search (Tìm kiếm ảnh tương tự)
+
+- Người dùng chọn một ảnh từ thiết bị để gửi lên server.
+- Server sẽ xử lý ảnh đầu vào, trích xuất đặc trưng và so sánh với dữ liệu trong hệ thống.
+- Kết quả trả về là **danh sách các ảnh có độ tương đồng cao nhất** với ảnh được gửi lên.
+
+## 2. Upload (Bổ sung ảnh vào hệ thống)
+
+Hệ thống cho phép người dùng bổ sung thêm dữ liệu ảnh mới để cải thiện độ bao phủ dữ liệu tìm kiếm.
+
+Có hai chế độ upload:
+
+- **Upload files:**  
+  Cho phép chọn **tối đa 5 ảnh** từ thiết bị để thêm vào hệ thống.
+
+- **Upload ZIP:**  
+  Dành cho trường hợp người dùng muốn **cập nhật nhiều ảnh cùng lúc**. Tập tin `.zip` cần chứa ảnh ở định dạng hợp lệ (jpg).
+
+Sau khi upload, hệ thống sẽ:
+- Tự động **trích xuất đặc trưng hình dạng và màu sắc** cho từng ảnh.
+- **Lưu trữ vào cơ sở dữ liệu**, sẵn sàng phục vụ cho truy vấn tìm kiếm trong tương lai.
+
 
 
