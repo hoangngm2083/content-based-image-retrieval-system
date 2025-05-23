@@ -25,6 +25,7 @@ def hybrid_similarity(
     Returns:
         np.ndarray: Combined similarity scores for each DB record.
     """
+
     # Normalize features
     query_vgg_norm = normalize(query_vgg.reshape(1, -1))
     db_vgg_norm = normalize(db_features["vgg"])
@@ -58,10 +59,13 @@ def search_hybrid(query_path: str, top_k: int = 10) -> List[Any]:
     if not records:
         return []
 
+
+
     # Prepare DB features as numpy arrays
     db_ids = [r[0] for r in records]
-    db_colors = np.array([r[1] for r in records])
-    db_vggs = np.array([r[2] for r in records])
+    db_paths = [r[1] for r in records]
+    db_colors = np.array([r[2] for r in records])
+    db_vggs = np.array([r[3] for r in records])
 
     db_features = {
         "color": db_colors,
@@ -69,10 +73,12 @@ def search_hybrid(query_path: str, top_k: int = 10) -> List[Any]:
     }
     # Calculate similarity scores
     scores = hybrid_similarity(query_color, query_vgg, db_features)
-
-
+    
     # Get indices of top-k scores (descending)
     top_indices = np.argsort(scores)[-top_k:][::-1]
 
+  
+
     # Return IDs corresponding to top indices
-    return [db_ids[i] for i in top_indices]
+    return [{"id": db_ids[i], "img": db_paths[i]} for i in top_indices]
+

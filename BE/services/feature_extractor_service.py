@@ -42,7 +42,10 @@ def extract_color_layout(image_path: str, grid_size: int = 8) -> np.ndarray:
             features.extend([avg_y, avg_cr, avg_cb])
 
     # Apply DCT and take first 6 coefficients
-    dct_coeffs = dct(features, norm='ortho')
+    dct_coeffs = dct(features, norm='ortho')[:6]
+    dct_min, dct_max = np.min(dct_coeffs), np.max(dct_coeffs)
+    dct_coeffs = (dct_coeffs - dct_min) / (dct_max - dct_min + 1e-8)
+    
     return dct_coeffs[:6]
 
 

@@ -53,7 +53,7 @@ def get_all_features() -> List[Tuple[int, Tuple[float, ...], Any]]:
     try:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT id, color_layout, vgg_features FROM images")
+                cur.execute("SELECT id, path, color_layout, vgg_features FROM images")
                 records = cur.fetchall()
         return records
     except Exception as e:
