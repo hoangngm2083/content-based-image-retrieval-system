@@ -10,7 +10,7 @@ SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+SELECT pg_catalog.set_config('search_path', 'public', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -23,6 +23,8 @@ SET default_table_access_method = heap;
 --
 -- Name: images; Type: TABLE; Schema: public; Owner: myuser
 --
+
+CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE public.images (
     id integer NOT NULL,

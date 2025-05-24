@@ -7,11 +7,11 @@ from controllers.file_controller import upload_file,upload_zip, upload_files
 from controllers.search_controller import search
 
 
-
-
 app = Flask(__name__)
 config(app)  # Load config from function
 CORS(app)
+
+
 @app.route('/')
 def home():
     return "Flask app with Docker and PostgreSQL!"
@@ -42,4 +42,4 @@ def search_route():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=False)
